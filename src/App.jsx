@@ -1,35 +1,69 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import axios from 'axios'
 import './App.css'
+import Papa from 'papaparse'
 
 function App() {
-  const [count, setCount] = useState(0)
+	const [selectedFile, setSelectedFile] = useState(null);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+	const onFileChange = (event) => {
+		const file = event.target.files[0];
+		setSelectedFile(file);
+	};
+
+	const onFileUpload = () => {
+		// Parsing CSV
+		if (selectedFile) {
+			Papa.parse(selectedFile, {
+				header: true,
+				skipEmptyLines: true,
+				complete: function (results) {
+					console.log("Parsed CSV data:", results.data);
+				},
+				error: function (err) {
+					console.error("Error parsing CSV:", err);
+				}
+			});
+		}
+	};
+
+	// Displaying the file information
+	const fileData = () => {
+		if (selectedFile) {
+			return (
+				<div>
+					<h2>File Details:</h2>
+					<p>File Name: {selectedFile.name}</p>
+					<p>File Type: {selectedFile.type}</p>
+				</div>
+			);
+		} else {
+			return (
+				<div>
+					<br />
+					<h4>Choose before Pressing the Upload button</h4>
+				</div>
+			);
+		}
+	};
+
+	return (
+		<>
+			<h1>Upload Your Activity</h1>
+
+			<div className="card">
+				<p id='instructions'>See instructions</p>
+				<p>
+					CSV file:
+				</p>
+				<div>
+					<input type="file" onChange={onFileChange} />
+					<button onClick={onFileUpload}>Upload!</button>
+				</div>
+				{fileData()}
+			</div>
+		</>
+	)
 }
 
 export default App
