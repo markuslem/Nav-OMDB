@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { createContext, useState } from 'react'
 import axios from 'axios'
 import './App.css'
 import Papa from 'papaparse'
+import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 
 function App() {
 	const [selectedFile, setSelectedFile] = useState(null);
@@ -18,7 +19,8 @@ function App() {
 				header: true,
 				skipEmptyLines: true,
 				complete: function (results) {
-					console.log("Parsed CSV data:", results.data);
+					console.log("Parsed CSV data:", results.data)
+					navigate('/analyze')
 				},
 				error: function (err) {
 					console.error("Error parsing CSV:", err);
@@ -47,6 +49,9 @@ function App() {
 		}
 	};
 
+
+	const navigate = useNavigate();
+
 	return (
 		<>
 			<h1>Upload Your Activity</h1>
@@ -58,7 +63,13 @@ function App() {
 				</p>
 				<div>
 					<input type="file" onChange={onFileChange} />
-					<button onClick={onFileUpload}>Upload!</button>
+					<button
+						onClick={() => {
+							onFileUpload();
+						}}
+					>
+						Analyze!
+					</button>
 				</div>
 				{fileData()}
 			</div>
