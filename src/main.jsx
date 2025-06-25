@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Instructions from './pages/Instructions.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 import ResultsPage from './pages/ResultsPage.jsx';
+import { CsvProvider } from './pages/CsvContext.jsx';
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <CsvProvider>
+      <RouterProvider router={router} />
+    </CsvProvider>
   </StrictMode>,
 )

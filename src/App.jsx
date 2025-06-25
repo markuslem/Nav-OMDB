@@ -1,11 +1,14 @@
-import { createContext, useState } from 'react'
+import { useState, useContext } from 'react'
 import axios from 'axios'
 import './App.css'
 import Papa from 'papaparse'
-import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { CsvContext } from './pages/CsvContext';
 
 function App() {
 	const [selectedFile, setSelectedFile] = useState(null);
+	const navigate = useNavigate();
+	const { setCsvData } = useContext(CsvContext);
 
 	const onFileChange = (event) => {
 		const file = event.target.files[0];
@@ -20,6 +23,7 @@ function App() {
 				skipEmptyLines: true,
 				complete: function (results) {
 					console.log("Parsed CSV data:", results.data)
+					setCsvData(results.data)
 					navigate('/analyze')
 				},
 				error: function (err) {
@@ -50,7 +54,6 @@ function App() {
 	};
 
 
-	const navigate = useNavigate();
 
 	return (
 		<>

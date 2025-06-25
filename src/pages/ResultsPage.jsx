@@ -1,5 +1,15 @@
+import { useContext } from 'react';
+import { CsvContext } from './CsvContext';
+
 const ResultsPage = () => {
-  return <h1>Results page</h1>;
+  const { csvData } = useContext(CsvContext)
+  return (
+    <>
+      <h1>Results page</h1>
+      <p>{JSON.stringify(csvData)}</p>
+    </>
+  )
+
 };
 
 export default ResultsPage;
