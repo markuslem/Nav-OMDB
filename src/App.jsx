@@ -1,5 +1,4 @@
 import { useState, useContext } from 'react'
-import axios from 'axios'
 import './App.css'
 import Papa from 'papaparse'
 import { useNavigate } from 'react-router-dom';
