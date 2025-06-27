@@ -4,10 +4,17 @@ import { CsvContext } from './CsvContext';
 
 const ResultsPage = () => {
   const { csvData } = useContext(CsvContext);
-  const [ movieData, setMovieData ] = useState(null);
+  const [movieData, setMovieData] = useState([]);
+  const [titles, setTitles] = useState(null);
 
+  // Parses the title of the movie from the given String
+  const parseTitle = (line) => {
+    console.log(line);
+  };
 
+  /* Makes OMDb API request with the given title (String) */
   const fetchMovie = async (title) => {
+    // Fetching from OMDb
     const apiKey = import.meta.env.VITE_OMDB_API_KEY;
     const { data } = await axios.get(`https://www.omdbapi.com/`, {
       params: {
@@ -15,12 +22,24 @@ const ResultsPage = () => {
         apikey: apiKey,
       },
     });
-    setMovieData(data);
+
+    // For emulating the real functionality
+    // const data = { Title: title, Year: "2025", Genre: "Drama, Thriller" };
+    setMovieData(prev => [...prev, data]);
+
+    // console.log(JSON.stringify(data));
   };
 
   useEffect(() => {
     fetchMovie("STRAW");
-  }, []);
+    if (csvData !== null) {
+      Object.values(csvData).forEach(item =>
+        fetchMovie(item.Title)
+      );
+    } else {
+      console.log("No CSV data");
+    }
+  }, [csvData]);
 
   return (
     <>
