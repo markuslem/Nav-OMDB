@@ -15,7 +15,7 @@ The main objective was to learn React framework through project based learing.
 
 ### Skills acquired:
 - [x] React Famework (Hooks & Context) <br>
-- [] API calls <br>
+- [x] API calls <br>
 - [] Styling using Tailwind CSS <br>
 
 ## Installation

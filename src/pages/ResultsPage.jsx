@@ -5,7 +5,9 @@ import { CsvContext } from './CsvContext';
 const ResultsPage = () => {
   const { csvData } = useContext(CsvContext);
   const [movieData, setMovieData] = useState([]);
-  const [titles, setTitles] = useState(null);
+
+  // Key -> Genre name    Value -> Nr of occurrences
+  const [genresMap, setGenresMap] = useState(new Map());
 
   // Parses the title of the movie from the given String
   const parseTitle = (line) => {
@@ -25,26 +27,58 @@ const ResultsPage = () => {
 
     // For emulating the real functionality
     // const data = { Title: title, Year: "2025", Genre: "Drama, Thriller" };
-    setMovieData(prev => [...prev, data]);
 
-    // console.log(JSON.stringify(data));
+    return data;
   };
 
-  useEffect(() => {
-    fetchMovie("STRAW");
-    if (csvData !== null) {
-      Object.values(csvData).forEach(item =>
-        fetchMovie(item.Title)
-      );
-    } else {
-      console.log("No CSV data");
+  function findGenres() {
+    let result = new Map();
+
+    for (const movie of movieData) {
+      if (!movie || !movie.Genre) {
+        console.log("Coulnd't find genre");
+        continue;
+      }
+
+      movie.Genre.split(',').map(g => g.trim()).forEach(genre => {
+        result.set(genre, (result.get(genre) || 0) + 1);
+      });
     }
+    setGenresMap(result);
+  }
+
+  useEffect(() => {
+    async function analyzeTitles() {
+      if (csvData !== null) {
+        const titles = Object.values(csvData).map(item => item.Title);
+        const result = await Promise.all(titles.map(fetchMovie));
+        setMovieData(result);
+        console.log("Done with analyzing");
+      } else {
+        console.log("No CSV data");
+      }
+    }
+    analyzeTitles();
   }, [csvData]);
+
+  useEffect(() => {
+    findGenres();
+  }, [movieData]);
+
 
   return (
     <>
       <h1>Results page</h1>
       <p>{JSON.stringify(movieData, null)}</p>
+
+      <h2>Top Genres</h2>
+      <ul>
+        {genresMap &&
+          Array.from(genresMap.entries()).map(([genre, count]) => (
+            <li key={genre}>{genre}: {count}</li>
+          ))
+        }
+      </ul>
     </>
   )
 
