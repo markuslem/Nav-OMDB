@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import './App.css'
 import Papa from 'papaparse'
 import { useNavigate } from 'react-router-dom';
@@ -7,12 +7,17 @@ import { CsvContext } from './pages/CsvContext';
 function App() {
 	const [selectedFile, setSelectedFile] = useState(null);
 	const navigate = useNavigate();
-	const { setCsvData } = useContext(CsvContext);
+	const { setCsvData } = useContext(CsvContext); // CSV data sent to the ResultsPage component
+	const [showInstructions, setShowInstructions] = useState(false);
 
 	const onFileChange = (event) => {
 		const file = event.target.files[0];
 		setSelectedFile(file);
 	};
+
+	useEffect(() => {
+		setShowInstructions(true); // Triggers animation
+	}, []);
 
 	const onFileUpload = () => {
 		// Parsing CSV
@@ -32,30 +37,32 @@ function App() {
 		}
 	};
 
-	// Displaying the file information
-	const fileData = () => {
-		if (selectedFile) {
-			return (
-				<div>
-					<h2>File Details:</h2>
-					<p>File Name: {selectedFile.name}</p>
-					<p>File Type: {selectedFile.type}</p>
-				</div>
-			);
-		} else {
-			return (
-				<div>
-					<br />
-					<h4>Choose before Pressing the Upload button</h4>
-				</div>
-			);
+
+	// Instruction components
+	const instructions = [
+		{
+			number: 1,
+			text: "Download viewing activity as CSV from your Netflix Account.",
+			extra: (
+				<p className="text-amber-300 underline cursor-pointer hover:text-amber-600 transition">
+					See Instructions</p>
+			),
+		},
+		{
+			number: 2,
+			text: "Upload the CSV file and click Analyze!"
+		},
+		{
+			number: 3,
+			text: "See the statistics."
 		}
-	};
+	];
 
 
 
 	return (
-		<>
+		// File uploading group
+		<div className='flex flex-col divide-dashed'>
 			<h1>Upload Your Activity</h1>
 
 			<div className="card">
@@ -65,17 +72,34 @@ function App() {
 				</p>
 				<div>
 					<input type="file" onChange={onFileChange} />
-					<button
-						onClick={() => {
-							onFileUpload();
-						}}
-					>
+					<button onClick={() => {
+						onFileUpload();
+					}}>
 						Analyze!
 					</button>
 				</div>
-				{fileData()}
 			</div>
-		</>
+
+
+			{/* Instructions group */}
+			<div className={`shadow-xl border-t-2
+			p-8 flex flex-col items-center space-y-4
+			transform transition-all duration-800 ease-out
+			${showInstructions ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
+				<h1 className="text-3xl font-bold underline text-red-800">How It Works?</h1>
+				<div>
+					{instructions.map((step) => (
+						<div key={step.number} className="flex space-x-2 [&>*]:text-lg">
+							<p className="text-red-300">{step.number}.</p>
+							<p>{step.text}</p>
+
+							{/* If exists */}
+							{step.extra}
+						</div>
+					))}
+				</div>
+			</div>
+		</div>
 	)
 }
 

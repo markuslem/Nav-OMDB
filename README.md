@@ -19,6 +19,9 @@ The main objective was to learn React framework through project based learing.
 - [] Styling using Tailwind CSS <br>
 
 ## Installation
+NB! Set up .env file in project root directory. <br>
+```$ echo VITE_OMDB_API_KEY="Your API key" > .env```
+
 ### Docker
 ```# docker compose up --build```
 ### Local
