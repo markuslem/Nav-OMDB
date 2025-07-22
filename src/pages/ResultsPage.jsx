@@ -1,6 +1,12 @@
 import { useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { CsvContext } from './CsvContext';
+import { data } from 'react-router-dom';
+
+// Chart.js
+import { Pie } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const ResultsPage = () => {
   const { csvData } = useContext(CsvContext);
@@ -9,10 +15,27 @@ const ResultsPage = () => {
   // Key -> Genre name    Value -> Nr of occurrences
   const [genresMap, setGenresMap] = useState(new Map());
 
-  // Parses the title of the movie from the given String
-  const parseTitle = (line) => {
-    console.log(line);
+
+  const pieChartData = {
+    labels: Array.from(genresMap.keys()),
+    datasets: [
+      {
+        label: 'Genres',
+        data: Array.from(genresMap.values()),
+      },
+    ],
   };
+
+
+  const pieChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+    },
+
+  }
 
   /* Makes OMDb API request with the given title (String) */
   const fetchMovie = async (title) => {
@@ -69,7 +92,7 @@ const ResultsPage = () => {
   return (
     <>
       <h1>Results page</h1>
-      <p>{JSON.stringify(movieData, null)}</p>
+      {/* <p>{JSON.stringify(movieData, null)}</p> */}
 
       <h2>Top Genres</h2>
       <ul>
@@ -79,6 +102,8 @@ const ResultsPage = () => {
           ))
         }
       </ul>
+
+      <Pie data={pieChartData} options={pieChartOptions} />
     </>
   )
 
